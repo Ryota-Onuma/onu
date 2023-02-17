@@ -1,0 +1,8 @@
+version: "3"
+services:
+  app:
+    volumes:
+      - ./:/go/src
+    tty: true
+    build:
+      context: .
