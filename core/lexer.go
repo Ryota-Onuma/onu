@@ -33,8 +33,50 @@ func (l *Lexer) NextToken() Token {
 	switch l.ch {
 	case '=', '+', '-', '*', '/', '%', '(', ')', ';':
 		tok = newToken(int(l.ch), l.ch)
+	case '足':
+		if l.peekChar() == 'す' {
+			l.readChar()
+			tok = newToken(int('+'), l.ch)
+		} else {
+			tok = newToken(int(UNKNOWN), l.ch)
+		}
+	case '引':
+		if l.peekChar() == 'く' {
+			l.readChar()
+			tok = newToken(int('-'), l.ch)
+		} else {
+			tok = newToken(int(UNKNOWN), l.ch)
+		}
+	case '掛':
+		if l.peekChar() == 'け' && l.peekChar2() == 'る' {
+			l.readChar()
+			l.readChar()
+			tok = newToken(int('*'), l.ch)
+		} else {
+			tok = newToken(int(UNKNOWN), l.ch)
+		}
+	case '割':
+		if l.peekChar() == 'る' {
+			l.readChar()
+			tok = newToken(int('/'), l.ch)
+		} else {
+			tok = newToken(int(UNKNOWN), l.ch)
+		}
+	case '余':
+		if l.peekChar() == 'り' {
+			l.readChar()
+			tok = newToken(int('%'), l.ch)
+		} else {
+			tok = newToken(int(UNKNOWN), l.ch)
+		}
 	default:
-		if isLetter(l.ch) {
+		if l.ch == '定' {
+			if l.peekChar() == '義' {
+				l.readChar()
+				tok = newToken(VAR, l.ch)
+				return tok
+			}
+		} else if isLetter(l.ch) {
 			tok.Literal = l.readIdentifier()
 			tok.Type = l.lookupIdent(tok.Literal)
 			return tok
@@ -66,6 +108,22 @@ func (l *Lexer) readIdentifier() string {
 
 func isLetter(ch rune) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
+}
+
+func (l *Lexer) peekChar() rune {
+	if l.readPosition >= len(l.input) {
+		return EOF
+	} else {
+		return l.input[l.readPosition]
+	}
+}
+
+func (l *Lexer) peekChar2() rune {
+	if l.readPosition+1 >= len(l.input) {
+		return EOF
+	} else {
+		return l.input[l.readPosition+1]
+	}
 }
 
 var keywords = map[string]int{
