@@ -1,125 +1,239 @@
 
 state 0
-	$accept: .program $end 
+	$accept: .statements $end 
+	statements: .    (1)
 
-	NUMBER  shift 3
-	.  error
+	IDENT  shift 6
+	INT  shift 5
+	VAR  shift 4
+	.  reduce 1 (src line 29)
 
-	program  goto 1
-	expr  goto 2
+	statements  goto 1
+	statement  goto 2
+	expr  goto 3
 
 state 1
-	$accept:  program.$end 
+	$accept:  statements.$end 
 
 	$end  accept
 	.  error
 
 
 state 2
-	program:  expr.    (1)
+	statements:  statement.statements 
+	statements: .    (1)
+
+	IDENT  shift 6
+	INT  shift 5
+	VAR  shift 4
+	.  reduce 1 (src line 29)
+
+	statements  goto 7
+	statement  goto 2
+	expr  goto 3
+
+state 3
+	statement:  expr.';' 
 	expr:  expr.'+' expr 
 	expr:  expr.'-' expr 
 	expr:  expr.'*' expr 
 	expr:  expr.'/' expr 
+	expr:  expr.'%' expr 
 
-	'+'  shift 4
-	'-'  shift 5
-	'*'  shift 6
-	'/'  shift 7
-	.  reduce 1 (src line 53)
-
-
-state 3
-	expr:  NUMBER.    (2)
-
-	.  reduce 2 (src line 60)
+	'+'  shift 9
+	'-'  shift 10
+	'*'  shift 11
+	'/'  shift 12
+	'%'  shift 13
+	';'  shift 8
+	.  error
 
 
 state 4
-	expr:  expr '+'.expr 
+	statement:  VAR.IDENT '=' expr ';' 
 
-	NUMBER  shift 3
+	IDENT  shift 14
 	.  error
 
-	expr  goto 8
 
 state 5
-	expr:  expr '-'.expr 
+	expr:  INT.    (5)
 
-	NUMBER  shift 3
-	.  error
+	.  reduce 5 (src line 53)
 
-	expr  goto 9
 
 state 6
-	expr:  expr '*'.expr 
+	expr:  IDENT.    (6)
 
-	NUMBER  shift 3
-	.  error
+	.  reduce 6 (src line 57)
 
-	expr  goto 10
 
 state 7
-	expr:  expr '/'.expr 
+	statements:  statement statements.    (2)
 
-	NUMBER  shift 3
-	.  error
+	.  reduce 2 (src line 37)
 
-	expr  goto 11
 
 state 8
-	expr:  expr.'+' expr 
-	expr:  expr '+' expr.    (3)
-	expr:  expr.'-' expr 
-	expr:  expr.'*' expr 
-	expr:  expr.'/' expr 
+	statement:  expr ';'.    (3)
 
-	'*'  shift 6
-	'/'  shift 7
-	.  reduce 3 (src line 65)
+	.  reduce 3 (src line 44)
 
 
 state 9
-	expr:  expr.'+' expr 
-	expr:  expr.'-' expr 
-	expr:  expr '-' expr.    (4)
-	expr:  expr.'*' expr 
-	expr:  expr.'/' expr 
+	expr:  expr '+'.expr 
 
-	'*'  shift 6
-	'/'  shift 7
-	.  reduce 4 (src line 69)
+	IDENT  shift 6
+	INT  shift 5
+	.  error
 
+	expr  goto 15
 
 state 10
-	expr:  expr.'+' expr 
-	expr:  expr.'-' expr 
-	expr:  expr.'*' expr 
-	expr:  expr '*' expr.    (5)
-	expr:  expr.'/' expr 
+	expr:  expr '-'.expr 
 
-	.  reduce 5 (src line 73)
+	IDENT  shift 6
+	INT  shift 5
+	.  error
 
+	expr  goto 16
 
 state 11
+	expr:  expr '*'.expr 
+
+	IDENT  shift 6
+	INT  shift 5
+	.  error
+
+	expr  goto 17
+
+state 12
+	expr:  expr '/'.expr 
+
+	IDENT  shift 6
+	INT  shift 5
+	.  error
+
+	expr  goto 18
+
+state 13
+	expr:  expr '%'.expr 
+
+	IDENT  shift 6
+	INT  shift 5
+	.  error
+
+	expr  goto 19
+
+state 14
+	statement:  VAR IDENT.'=' expr ';' 
+
+	'='  shift 20
+	.  error
+
+
+state 15
+	expr:  expr.'+' expr 
+	expr:  expr '+' expr.    (7)
+	expr:  expr.'-' expr 
+	expr:  expr.'*' expr 
+	expr:  expr.'/' expr 
+	expr:  expr.'%' expr 
+
+	'*'  shift 11
+	'/'  shift 12
+	'%'  shift 13
+	.  reduce 7 (src line 60)
+
+
+state 16
+	expr:  expr.'+' expr 
+	expr:  expr.'-' expr 
+	expr:  expr '-' expr.    (8)
+	expr:  expr.'*' expr 
+	expr:  expr.'/' expr 
+	expr:  expr.'%' expr 
+
+	'*'  shift 11
+	'/'  shift 12
+	'%'  shift 13
+	.  reduce 8 (src line 63)
+
+
+state 17
+	expr:  expr.'+' expr 
+	expr:  expr.'-' expr 
+	expr:  expr.'*' expr 
+	expr:  expr '*' expr.    (9)
+	expr:  expr.'/' expr 
+	expr:  expr.'%' expr 
+
+	.  reduce 9 (src line 66)
+
+
+state 18
 	expr:  expr.'+' expr 
 	expr:  expr.'-' expr 
 	expr:  expr.'*' expr 
 	expr:  expr.'/' expr 
-	expr:  expr '/' expr.    (6)
+	expr:  expr '/' expr.    (10)
+	expr:  expr.'%' expr 
 
-	.  reduce 6 (src line 77)
+	.  reduce 10 (src line 69)
 
 
-8 terminals, 3 nonterminals
-7 grammar rules, 12/16000 states
+state 19
+	expr:  expr.'+' expr 
+	expr:  expr.'-' expr 
+	expr:  expr.'*' expr 
+	expr:  expr.'/' expr 
+	expr:  expr.'%' expr 
+	expr:  expr '%' expr.    (11)
+
+	.  reduce 11 (src line 72)
+
+
+state 20
+	statement:  VAR IDENT '='.expr ';' 
+
+	IDENT  shift 6
+	INT  shift 5
+	.  error
+
+	expr  goto 21
+
+state 21
+	statement:  VAR IDENT '=' expr.';' 
+	expr:  expr.'+' expr 
+	expr:  expr.'-' expr 
+	expr:  expr.'*' expr 
+	expr:  expr.'/' expr 
+	expr:  expr.'%' expr 
+
+	'+'  shift 9
+	'-'  shift 10
+	'*'  shift 11
+	'/'  shift 12
+	'%'  shift 13
+	';'  shift 22
+	.  error
+
+
+state 22
+	statement:  VAR IDENT '=' expr ';'.    (4)
+
+	.  reduce 4 (src line 49)
+
+
+13 terminals, 4 nonterminals
+12 grammar rules, 23/16000 states
 0 shift/reduce, 0 reduce/reduce conflicts reported
-52 working sets used
-memory: parser 5/240000
+53 working sets used
+memory: parser 11/240000
 0 extra closures
-13 shift entries, 1 exceptions
-6 goto entries
-0 entries saved by goto default
-Optimizer space used: output 13/240000
-13 table entries, 0 zero
-maximum spread: 8, maximum offset: 7
+38 shift entries, 1 exceptions
+10 goto entries
+2 entries saved by goto default
+Optimizer space used: output 33/240000
+33 table entries, 1 zero
+maximum spread: 13, maximum offset: 20
